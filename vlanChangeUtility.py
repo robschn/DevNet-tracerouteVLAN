@@ -30,11 +30,11 @@ def ciscoMenu():
     print ("4. Exit")
 
 def showVlan():
-    showVlan = net_connect.send_command('\nshow vlan brief')
+    showVlan = net_connect.send_command('show vlan brief')
     print (showVlan)
 
 def showInt():
-    showInt = net_connect.send_command('\nshow int status')
+    showInt = net_connect.send_command('show int status')
     print (showInt)
 
 # def modifyInterface():
@@ -199,7 +199,7 @@ while True:     # While loop which will keep going until loop = False
 # Starting VLAN configuration
         if changeDecision == 'YES' or changeDecision == 'Y':
             vlanNumber = input ('\nPlease assign VLAN number: ') # User enters VLAN number
-            showVlan = net_connect.send_command('\nshow vlan brief') # Store variable if user does not execute menu option1
+            showVlan = net_connect.send_command('show vlan brief') # Store variable if user does not execute menu option1
             if vlanNumber in showVlan: # Checks for valid vlan
                 print ('\nAssiging VLAN number...')
                 config_commands = [                                  # config_commands list array.
