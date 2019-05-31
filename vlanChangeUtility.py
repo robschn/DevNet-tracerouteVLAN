@@ -184,10 +184,8 @@ while True:     # While loop which will keep going until loop = False
     elif menuChoice=='2':
         showInt()
     elif menuChoice=='3':
-        showInt = net_connect.send_command('\nshow int status')
-        interface = input ('\nWhat interface would you like to modify e.g Gi0/1: ')
         print ('\nShowing Current Configuration')
-        output = net_connect.send_command('show run int '+interface)
+        output = net_connect.send_command('show run int '+switchInt)
         if 'Invalid input detected' in output: # Checks for valid port selection
             print ('*****ERROR: INVALID PORT TYPE****')
             continue
@@ -205,13 +203,13 @@ while True:     # While loop which will keep going until loop = False
             if vlanNumber in showVlan: # Checks for valid vlan
                 print ('\nAssiging VLAN number...')
                 config_commands = [                                  # config_commands list array.
-                'Interface '+interface,
+                'Interface '+switchInt,
                 'switchport access vlan '+vlanNumber
                             ]
                 net_connect.send_config_set(config_commands)
                 print ('\nVlan Updated...')
                 print ('\nShowing Updated Configuration')
-                output = net_connect.send_command('show run int '+interface) # Show Updated Config after changes
+                output = net_connect.send_command('show run int '+switchInt) # Show Updated Config after changes
                 print (output)
                 print ('\nWriting Configuration...')
                 net_connect.send_command_expect('write mem') # Write Mem
