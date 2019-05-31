@@ -24,7 +24,7 @@ import socket
 
 # Menu defintions
 def ciscoMenu():
-    print ("1. Show VLAN list")
+    print ("\n1. Show VLAN list")
     print ("2. Show interface status")
     print ("3. Modify interface")
     print ("4. Exit")
@@ -74,7 +74,7 @@ while True:
 		print ('\nLogin failed. Please try again.')
 		continue
 
-print ('\nSearching MAC address...\n')
+print ('Searching MAC address...')
 
 # check to see if the MAC is on the distro and grab some variables
 while True:
