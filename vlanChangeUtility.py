@@ -50,38 +50,132 @@ def exitProgram():
 ##########################
 
 print ('Welcome to the VLAN change utility.')
+userMAC = input("\nPlease enter the MAC address you would like to search. Must be HHHH.HHHH.HHHH format: ")
+deviceName = input("Please enter the IP of the switch you would like to search: ")
 
-while True:
-    # Determines which device to log into
-    deviceName = input('\nPlease enter the DNS name of a device to get started e.g core1-sitecode: ')
-    try:
-        # Resolves DNS
-        data = socket.gethostbyname_ex(deviceName)
-        print ('\nThe DNS and IP Address of this device is: '+repr(data))
-        break
-        # Error checks for valid DNS record
-    except socket.gaierror:
-        print ('\nUnable to resolve hostname. Please try again.')
-        #continue
-print ('\nLogging in now...')
+username = input("\nUsername: ")
+password = getpass()
 
-# SSH Login Details
+# connect to user's choice
 while True:
-    try:
-        myDevice = {
-        'host': deviceName,
-        'username': 'username', #Type username here!
-        'password': getpass(),
-        'device_type': 'cisco_ios',
-        }
-# Connects to "myDevice"
-        net_connect = Netmiko(**myDevice)
-        net_connect.enable()
+	try:
+		myDevice = {
+		'host': menuChoice,
+		'username': username,
+		'password': password,
+		'device_type': 'cisco_ios',
+		}
+		print ('\nLogging in now...')
+		# connects to "myDevice"
+		net_connect = Netmiko(**myDevice)
+		net_connect.enable()
+		break
+	except:
+		print ('\nLogin failed. Please try again.')
+		continue
+
+print ('\nSearching MAC address...\n')
+
+# check to see if the MAC is on the distro and grab some variables
+while True:
+    # issue show mac add add userMAC
+    showMAC = net_connect.send_command('show mac add add ' +userMAC)
+    # checks to see if we get correct output
+    if 'Unicast Entries' in showMAC:
+        # splits output into strings
+        MAClst = [];
+        for char in showMAC:
+            MAClst.append(char)
+        MACvarsplit = (''.join(MAClst).split('\n'))
+
+        MACint = MACvarsplit[3]
+
+        # grabs VLAN
+        switchVLAN = MACint.split()[0]
+
+        # grabs current interface
+        currentSwitchInt = MACint.split()[4]
+
         break
-    except:
-        print ('\nLogin failed. Please try again.')
+    else:
+        # if no results, tell the user MAC not found, check MAC
+        print ('\n*****ERROR: MAC NOT FOUND****\n')
+        # offer for them to change MAC and try again or change MAC
+        userMAC = input('\nMust be HHHH.HHHH.HHHH format: ')
         continue
 
+# runs traceroute and if the MAC is on another switch, it will connect. If the MAC is on the switch itself, it'll go directly to change VLAN
+while True:
+    tracerouteMAC = net_connect.send_command('traceroute mac ' +userMAC+ ' ' + userMAC)
+
+    # MAC is on another switch
+    if 'Layer 2 trace completed' in tracerouteMAC:
+
+        # makes output into seperate strings
+        TRACElst = [];
+        for char in tracerouteMAC:
+            TRACElst.append(char)
+        TRACEvarsplit = (''.join(TRACElst).split('\n'))
+
+        # grabs only the part of the output that contains IP and interface of MAC
+        TRACEint = TRACEvarsplit[1]
+
+        # grabs switch name
+        switchName = TRACEint.split()[1]
+
+        # grabs switch interface
+        switchInt = TRACEint.split()[-1]
+
+        # grabs switch IP
+        outputSwitchIP = TRACEint.split()[2]
+        switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
+
+	# tell the user MAC has been found and where it is
+        print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
+
+	# connect to switch so they can change the VLAN
+        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+        if changeVLAN=='Y':
+        	# connects to switchIP
+        	while True:
+        		try:
+        			myDevice = {
+        			'host': switchIP,
+        			'username': username,
+        			'password': password,
+        			'device_type': 'cisco_ios',
+        			}
+        			print ('\nLogging into ' +switchName+ ' now...')
+        			# connects to "myDevice"
+        			net_connect = Netmiko(**myDevice)
+        			net_connect.enable()
+        			break
+        		except:
+        			print ('Login failed. Please try again.')
+        			continue
+
+        elif changeVLAN=='N':
+        	exitProgram()
+        break
+
+    # MAC is on current switch.
+    elif 'Source and Destination on same port and no nbr!' in tracerouteMAC:
+
+	# tell the user the MAC has been found and is on the current switch
+        print ('\nMAC ' +userMAC+ ' is on this switch! \n\nInterface: ' +currentSwitchInt+ '\nVLAN: ' +switchVLAN)
+
+        # ask user if they want to change the VLAN
+        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+        if changeVLAN=='Y':
+        	break
+
+        elif changeVLAN=='N':
+        	exit()
+
+    else:
+        print ('\nAn error has occured.')
+        exitProgram()
+        
 while True:     # While loop which will keep going until loop = False
     ciscoMenu() # Displays menu
     menuChoice = input("Enter your choice [1-4]: ")
