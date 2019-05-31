@@ -34,7 +34,7 @@ def showVlan():
     print (showVlan)
 
 def showInt():
-    showInt = net_connect.send_command('show int status')
+    showInt = net_connect.send_command('show int '+switchInt+ ' status')
     print (showInt)
 
 # def modifyInterface():
