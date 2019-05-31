@@ -1,8 +1,8 @@
-# VLAN Change Utility
+## VLAN Change Utility
 
 This VLAN utility was developed to empower other teams the ability to change their own VLAN.
 
-## Usage
+### Usage
 
 1. Enter the MAC address of the device.
 
