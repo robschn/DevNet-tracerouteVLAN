@@ -54,15 +54,14 @@ userMAC = input("\nPlease enter the MAC address you would like to search. Must b
 deviceName = input("Please enter the IP of the switch you would like to search: ")
 
 username = input("\nUsername: ")
-password = getpass()
 
 # connect to user's choice
 while True:
 	try:
 		myDevice = {
-		'host': menuChoice,
+		'host': deviceName,
 		'username': username,
-		'password': password,
+		'password': getpass(),
 		'device_type': 'cisco_ios',
 		}
 		print ('\nLogging in now...')
@@ -175,7 +174,7 @@ while True:
     else:
         print ('\nAn error has occured.')
         exitProgram()
-        
+
 while True:     # While loop which will keep going until loop = False
     ciscoMenu() # Displays menu
     menuChoice = input("Enter your choice [1-4]: ")
