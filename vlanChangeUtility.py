@@ -110,21 +110,37 @@ while True:
 
     # MAC is on another switch
     if 'Layer 2 trace completed' in tracerouteMAC:
+        # makes output into seperate strings
+        TRACElst = [];
+        for char in tracerouteMAC:
+            TRACElst.append(char)
+        TRACEvarsplit = (''.join(TRACElst).split('\n'))
+
+        # grabs only the part of the output that contains IP and interface of MAC
+        TRACEint = TRACEvarsplit[1]
+
+        # grabs switch name
+        switchName = TRACEint.split()[1]
+
+        # grabs switch interface
+        switchInt = TRACEint.split()[-1]
+
+        # grabs switch IP
+        outputSwitchIP = TRACEint.split()[2]
+        switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
+
+        # tell the user MAC has been found and where it is
+        print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
+
         break
 
     # MAC is on current switch.
     elif 'Source and Destination on same port and no nbr!' in tracerouteMAC:
-
-	# tell the user the MAC has been found and is on the current switch
+	    # tell the user the MAC has been found and is on the current switch
         print ('\nMAC ' +userMAC+ ' is on this switch! \n\nInterface: ' +currentSwitchInt+ '\nVLAN: ' +switchVLAN)
+        switchInt = currentSwitchInt
+        break
 
-        # ask user if they want to change the VLAN
-        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
-        if changeVLAN=='Y':
-        	break
-
-        elif changeVLAN=='N':
-        	exit()
     #there is a phone in the middle of the switch and device
     elif  'Unable to send a l2trace request' in tracerouteMAC
         #grab phoneIP from output
@@ -149,29 +165,30 @@ while True:
 
         #issue traceroute mac phoneMAC phoneMAC
         tracerouteMAC = net_connect.send_command('traceroute mac ' + phoneMAC + ' ' + phoneMAC)
+
+        # makes output into seperate strings
+        TRACElst = [];
+        for char in tracerouteMAC:
+            TRACElst.append(char)
+        TRACEvarsplit = (''.join(TRACElst).split('\n'))
+
+        # grabs only the part of the output that contains IP and interface of MAC
+        TRACEint = TRACEvarsplit[1]
+
+        # grabs switch name
+        switchName = TRACEint.split()[1]
+
+        # grabs switch interface
+        switchInt = TRACEint.split()[-1]
+
+        # grabs switch IP
+        outputSwitchIP = TRACEint.split()[2]
+        switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
+
+        # tell the user MAC has been found and where it is
+        print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
         break
 
-# makes output into seperate strings
-TRACElst = [];
-for char in tracerouteMAC:
-    TRACElst.append(char)
-TRACEvarsplit = (''.join(TRACElst).split('\n'))
-
-# grabs only the part of the output that contains IP and interface of MAC
-TRACEint = TRACEvarsplit[1]
-
-# grabs switch name
-switchName = TRACEint.split()[1]
-
-# grabs switch interface
-switchInt = TRACEint.split()[-1]
-
-# grabs switch IP
-outputSwitchIP = TRACEint.split()[2]
-switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
-
-# tell the user MAC has been found and where it is
-print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
 
 # connect to switch so they can change the VLAN
 changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
