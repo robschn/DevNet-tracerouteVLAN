@@ -131,7 +131,6 @@ while True:
 
         # tell the user MAC has been found and where it is
         print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
-
         break
 
     # MAC is on current switch.
@@ -142,7 +141,7 @@ while True:
         break
 
     #there is a phone in the middle of the switch and device
-    elif  'Unable to send a l2trace request' in tracerouteMAC
+    elif 'Unable to send a l2trace request' in tracerouteMAC:
         #grab phoneIP from output
         PHONElst = [];
         for char in tracerouteMAC:
@@ -196,20 +195,20 @@ if changeVLAN=='Y':
     # connects to switchIP
     while True:
         try:
-        	myDevice = {
-        	'host': switchIP,
-        	'username': username,
-    		'password': password,
-    		'device_type': 'cisco_ios',
-    		}
-    		print ('\nLogging into ' +switchName+ ' now...')
-			# connects to "myDevice"
-			net_connect = Netmiko(**myDevice)
-			net_connect.enable()
-    		break
+            myDevice = {
+            'host': switchIP,
+            'username': username,
+            'password': password,
+            'device_type': 'cisco_ios',
+            }
+            print ('\nLogging into ' +switchName+ ' now...')
+            # connects to "myDevice"
+            net_connect = Netmiko(**myDevice)
+            net_connect.enable()
+            break
         except:
-			print ('Login failed. Please try again.')
-		    continue
+            print ('Login failed. Please try again.')
+            continue
 
 elif changeVLAN=='N':
     exitProgram()
