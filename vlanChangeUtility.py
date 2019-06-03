@@ -125,7 +125,31 @@ while True:
 
         elif changeVLAN=='N':
         	exit()
-    elif
+    #there is a phone in the middle of the switch and device
+    elif  'Unable to send a l2trace request' in tracerouteMAC
+        #grab phoneIP from output
+        PHONElst = [];
+        for char in tracerouteMAC:
+            PHONElst.append(char)
+        PHONEvarsplit = (''.join(PHONElst).split('\n'))
+        PHONEint = PHONEvarsplit[0]
+        outputPhoneIP = PHONEint.split()[-3]
+        phoneIP = outputPhoneIP.strip(string.punctuation) #removes . from output
+        #issue sh ip arp phoneIP
+        phoneARP = net_connect.send_command('sh ip arp ' + phoneIP)
+
+        #grab phoneMAC
+        phoneMAClst = [];
+        for char in phoneARP:
+            phoneMAClst.append(char)
+        phoneMACvarsplit = (''.join(phoneMAClst).split('\n'))
+
+        phoneMACint = phoneMACvarsplit[1]
+        phoneMAC = phoneMACint.split()[3]
+
+        #issue traceroute mac phoneMAC phoneMAC
+        tracerouteMAC = net_connect.send_command('traceroute mac ' + phoneMAC + ' ' + phoneMAC)
+        break
 
 # makes output into seperate strings
 TRACElst = [];
