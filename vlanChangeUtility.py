@@ -132,6 +132,30 @@ while True:
 
         # tell the user MAC has been found and where it is
         print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
+
+        # connect to switch so they can change the VLAN
+        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+        if changeVLAN=='Y':
+            # connects to switchIP
+            while True:
+                try:
+                    myDevice = {
+                    'host': switchIP,
+                    'username': username,
+                    'password': password,
+                    'device_type': 'cisco_ios',
+                    }
+                    print ('\nLogging into ' +switchName+ ' now...')
+                    # connects to "myDevice"
+                    net_connect = Netmiko(**myDevice)
+                    net_connect.enable()
+                    break
+                except:
+                    print ('Login failed. Please try again.')
+                    continue
+
+        elif changeVLAN=='N':
+            exitProgram()
         break
 
     # MAC is on current switch.
@@ -139,7 +163,13 @@ while True:
 	    # tell the user the MAC has been found and is on the current switch
         print ('\nMAC ' +userMAC+ ' is on this switch! \n\nInterface: ' +currentSwitchInt+ '\nVLAN: ' +switchVLAN)
         switchInt = currentSwitchInt
-        break
+
+        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+        if changeVLAN=='Y':
+            break
+
+        elif changeVLAN=='N':
+            exitProgram()
 
     #there is a phone in the middle of the switch and device
     elif 'Unable to send a l2trace request' in tracerouteMAC:
@@ -187,32 +217,32 @@ while True:
 
         # tell the user MAC has been found and where it is
         print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
+
+        # connect to switch so they can change the VLAN
+        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+        if changeVLAN=='Y':
+            # connects to switchIP
+            while True:
+                try:
+                    myDevice = {
+                    'host': switchIP,
+                    'username': username,
+                    'password': password,
+                    'device_type': 'cisco_ios',
+                    }
+                    print ('\nLogging into ' +switchName+ ' now...')
+                    # connects to "myDevice"
+                    net_connect = Netmiko(**myDevice)
+                    net_connect.enable()
+                    break
+                except:
+                    print ('Login failed. Please try again.')
+                    continue
+
+        elif changeVLAN=='N':
+            exitProgram()
+
         break
-
-
-# connect to switch so they can change the VLAN
-changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
-if changeVLAN=='Y':
-    # connects to switchIP
-    while True:
-        try:
-            myDevice = {
-            'host': switchIP,
-            'username': username,
-            'password': password,
-            'device_type': 'cisco_ios',
-            }
-            print ('\nLogging into ' +switchName+ ' now...')
-            # connects to "myDevice"
-            net_connect = Netmiko(**myDevice)
-            net_connect.enable()
-            break
-        except:
-            print ('Login failed. Please try again.')
-            continue
-
-elif changeVLAN=='N':
-    exitProgram()
 
 while True:     # While loop which will keep going until loop = False
     ciscoMenu() # Displays menu
