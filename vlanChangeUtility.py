@@ -105,9 +105,10 @@ while True:
         continue
 
 # runs traceroute and if the MAC is on another switch, it will connect. If the MAC is on the switch itself, it'll go directly to change VLAN
+print('Running traceroute. This may take up one minute...')
 while True:
-    tracerouteMAC = net_connect.send_command('traceroute mac ' +userMAC+ ' ' + userMAC)
 
+    tracerouteMAC = net_connect.send_command('traceroute mac ' +userMAC+ ' ' + userMAC)
     # MAC is on another switch
     if 'Layer 2 trace completed' in tracerouteMAC:
         # makes output into seperate strings
