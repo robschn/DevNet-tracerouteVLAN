@@ -110,52 +110,6 @@ while True:
 
     # MAC is on another switch
     if 'Layer 2 trace completed' in tracerouteMAC:
-
-        # makes output into seperate strings
-        TRACElst = [];
-        for char in tracerouteMAC:
-            TRACElst.append(char)
-        TRACEvarsplit = (''.join(TRACElst).split('\n'))
-
-        # grabs only the part of the output that contains IP and interface of MAC
-        TRACEint = TRACEvarsplit[1]
-
-        # grabs switch name
-        switchName = TRACEint.split()[1]
-
-        # grabs switch interface
-        switchInt = TRACEint.split()[-1]
-
-        # grabs switch IP
-        outputSwitchIP = TRACEint.split()[2]
-        switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
-
-	# tell the user MAC has been found and where it is
-        print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
-
-	# connect to switch so they can change the VLAN
-        changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
-        if changeVLAN=='Y':
-        	# connects to switchIP
-        	while True:
-        		try:
-        			myDevice = {
-        			'host': switchIP,
-        			'username': username,
-        			'password': password,
-        			'device_type': 'cisco_ios',
-        			}
-        			print ('\nLogging into ' +switchName+ ' now...')
-        			# connects to "myDevice"
-        			net_connect = Netmiko(**myDevice)
-        			net_connect.enable()
-        			break
-        		except:
-        			print ('Login failed. Please try again.')
-        			continue
-
-        elif changeVLAN=='N':
-        	exitProgram()
         break
 
     # MAC is on current switch.
@@ -171,10 +125,53 @@ while True:
 
         elif changeVLAN=='N':
         	exit()
+    elif
 
-    else:
-        print ('\nAn error has occured.')
-        exitProgram()
+# makes output into seperate strings
+TRACElst = [];
+for char in tracerouteMAC:
+    TRACElst.append(char)
+TRACEvarsplit = (''.join(TRACElst).split('\n'))
+
+# grabs only the part of the output that contains IP and interface of MAC
+TRACEint = TRACEvarsplit[1]
+
+# grabs switch name
+switchName = TRACEint.split()[1]
+
+# grabs switch interface
+switchInt = TRACEint.split()[-1]
+
+# grabs switch IP
+outputSwitchIP = TRACEint.split()[2]
+switchIP = outputSwitchIP.strip(string.punctuation) # removes () from output
+
+# tell the user MAC has been found and where it is
+print ('\nMAC ' +userMAC+ ' has been found! \n\nSwitch: ' +switchName+ ' (' +switchIP+ ')\nInterface: ' +switchInt+ '\nVLAN: ' +switchVLAN)
+
+# connect to switch so they can change the VLAN
+changeVLAN = input ('\nWould you like to change the VLAN? Y/N: ').upper() # corrects user input into Uppercase
+if changeVLAN=='Y':
+    # connects to switchIP
+    while True:
+        try:
+        	myDevice = {
+        	'host': switchIP,
+        	'username': username,
+    		'password': password,
+    		'device_type': 'cisco_ios',
+    		}
+    		print ('\nLogging into ' +switchName+ ' now...')
+			# connects to "myDevice"
+			net_connect = Netmiko(**myDevice)
+			net_connect.enable()
+    		break
+        except:
+			print ('Login failed. Please try again.')
+		    continue
+
+elif changeVLAN=='N':
+    exitProgram()
 
 while True:     # While loop which will keep going until loop = False
     ciscoMenu() # Displays menu
