@@ -53,26 +53,24 @@ print ('Welcome to the VLAN change utility.')
 userMAC = input("\nPlease enter the MAC address you would like to search. Must be HHHH.HHHH.HHHH format: ")
 deviceName = input("Please enter the IP of the switch you would like to search: ")
 
-username = input("\nUsername: ")
-password = getpass()
-
 # connect to user's choice
 while True:
-	try:
-		myDevice = {
-		'host': deviceName,
-		'username': username,
-		'password': password,
-		'device_type': 'cisco_ios',
-		}
-		print ('\nLogging in now...')
-		# connects to "myDevice"
-		net_connect = Netmiko(**myDevice)
-		net_connect.enable()
-		break
-	except:
-		print ('\nLogin failed. Please try again.')
-		continue
+    try:
+        username = input("Username: ")
+        password = getpass()
+        myDevice = {
+        'host': userSwitch,
+        'username': username,
+        'password': password,
+        'device_type': 'cisco_ios',
+        }
+        print("Logging in now...")
+        net_connect = Netmiko(**myDevice)
+        net_connect.enable()
+        break
+    except:
+        print("Login failed. Please try again.\n")
+        continue
 
 print ('Searching MAC address...')
 
